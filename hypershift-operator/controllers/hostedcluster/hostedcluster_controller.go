@@ -1905,7 +1905,35 @@ func reconcileControlPlaneOperatorDeployment(deployment *appsv1.Deployment, hc *
 						},
 						Command: []string{"/usr/bin/control-plane-operator"},
 						Args:    []string{"run", "--namespace", "$(MY_NAMESPACE)", "--deployment-name", "control-plane-operator", "--metrics-addr", "0.0.0.0:8080", fmt.Sprintf("--enable-ci-debug-output=%t", enableCIDebugOutput), fmt.Sprintf("--registry-overrides=%s", registryOverrideCommandLine)},
-						Ports:   []corev1.ContainerPort{{Name: "metrics", ContainerPort: 8080}},
+						LivenessProbe: &corev1.Probe{
+							Handler: corev1.Handler{
+								HTTPGet: &corev1.HTTPGetAction{
+									Path:   "/metrics",
+									Port:   intstr.FromInt(8080),
+									Scheme: corev1.URISchemeHTTP,
+								},
+							},
+							InitialDelaySeconds: int32(60),
+							PeriodSeconds:       int32(60),
+							SuccessThreshold:    int32(1),
+							FailureThreshold:    int32(5),
+							TimeoutSeconds:      int32(5),
+						},
+						ReadinessProbe: &corev1.Probe{
+							Handler: corev1.Handler{
+								HTTPGet: &corev1.HTTPGetAction{
+									Path:   "/metrics",
+									Port:   intstr.FromInt(8080),
+									Scheme: corev1.URISchemeHTTP,
+								},
+							},
+							InitialDelaySeconds: int32(15),
+							PeriodSeconds:       int32(60),
+							SuccessThreshold:    int32(1),
+							FailureThreshold:    int32(3),
+							TimeoutSeconds:      int32(5),
+						},
+						Ports: []corev1.ContainerPort{{Name: "metrics", ContainerPort: 8080}},
 					},
 				},
 			},
