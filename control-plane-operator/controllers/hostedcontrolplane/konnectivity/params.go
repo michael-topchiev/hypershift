@@ -55,7 +55,7 @@ func NewKonnectivityParams(hcp *hyperv1.HostedControlPlane, images map[string]st
 				HTTPGet: &corev1.HTTPGetAction{
 					Scheme: corev1.URISchemeHTTP,
 					Port:   intstr.FromInt(int(healthPort)),
-					Path:   "readyz",
+					Path:   "healthz",
 				},
 			},
 			InitialDelaySeconds: 15,
