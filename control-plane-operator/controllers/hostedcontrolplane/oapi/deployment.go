@@ -128,6 +128,7 @@ func ReconcileDeployment(deployment *appsv1.Deployment, ownerRef config.OwnerRef
 				}
 			}),
 		},
+		TerminationGracePeriodSeconds: pointer.Int64Ptr(90),
 	}
 
 	util.AvailabilityProber(kas.InClusterKASReadyURL(deployment.Namespace, apiPort), availabilityProberImage, &deployment.Spec.Template.Spec)

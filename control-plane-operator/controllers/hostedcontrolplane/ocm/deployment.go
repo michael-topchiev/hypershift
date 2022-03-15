@@ -75,6 +75,7 @@ func ReconcileDeployment(deployment *appsv1.Deployment, ownerRef config.OwnerRef
 		util.BuildVolume(ocmVolumeServingCert(), buildOCMVolumeServingCert),
 		util.BuildVolume(ocmVolumeKubeconfig(), buildOCMVolumeKubeconfig),
 	}
+	deployment.Spec.Template.Spec.TerminationGracePeriodSeconds = pointer.Int64Ptr(90)
 	deploymentConfig.ApplyTo(deployment)
 	return nil
 }
