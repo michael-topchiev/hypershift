@@ -154,6 +154,12 @@ func ReconcileRole(role *rbacv1.Role, ownerRef config.OwnerRef, networkType hype
 				Verbs: []string{"*"},
 			},
 			{
+				APIGroups:     []string{appsv1.SchemeGroupVersion.Group},
+				Resources:     []string{"deployments"},
+				ResourceNames: []string{"cluster-network-operator"},
+				Verbs:         []string{"get"},
+			},
+			{
 				APIGroups: []string{corev1.SchemeGroupVersion.Group},
 				Resources: []string{"services"},
 				ResourceNames: []string{
