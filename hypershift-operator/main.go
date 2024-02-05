@@ -26,6 +26,9 @@ import (
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 
+	"net/http/pprof"
+	_ "net/http/pprof"
+
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/go-logr/logr"
 	operatorv1 "github.com/openshift/api/operator/v1"
@@ -185,6 +188,8 @@ func run(ctx context.Context, opts *StartOptions, log logr.Logger) error {
 	if err != nil {
 		return fmt.Errorf("unable to start manager: %w", err)
 	}
+
+	mgr.AddMetricsExtraHandler("/pprof", pprof.Handler("heap"))
 
 	kubeDiscoveryClient, err := discovery.NewDiscoveryClientForConfig(mgr.GetConfig())
 	if err != nil {
